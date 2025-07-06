@@ -152,7 +152,7 @@ public class BatchConfig {
       FlatFileItemReader<Rating> ratingItemReader,
       JdbcBatchItemWriter<Rating> ratingItemWriter) {
     return new StepBuilder("ratingImportStep", jobRepository)
-        .<Rating, Rating>chunk(100, transactionManager)
+        .<Rating, Rating>chunk(1000, transactionManager)
         .reader(ratingItemReader)
         .writer(ratingItemWriter)
         .build();
