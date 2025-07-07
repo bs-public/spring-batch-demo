@@ -2,6 +2,7 @@ package com.config;
 
 import com.batch.MovieFieldSetMapper;
 import com.batch.RatingFieldSetMapper;
+import com.batch.RatingItemProcessor;
 import com.batch.UserFieldSetMapper;
 import com.model.Movie;
 import javax.sql.DataSource;
@@ -146,14 +147,21 @@ public class BatchConfig {
   }
 
   @Bean
+  public RatingItemProcessor ratingItemProcessor() {
+    return new RatingItemProcessor();
+  }
+
+  @Bean
   public Step ratingImportStep(
       JobRepository jobRepository,
       PlatformTransactionManager transactionManager,
       FlatFileItemReader<Rating> ratingItemReader,
+      RatingItemProcessor ratingItemProcessor,
       JdbcBatchItemWriter<Rating> ratingItemWriter) {
     return new StepBuilder("ratingImportStep", jobRepository)
         .<Rating, Rating>chunk(1000, transactionManager)
         .reader(ratingItemReader)
+        .processor(ratingItemProcessor)
         .writer(ratingItemWriter)
         .build();
   }
